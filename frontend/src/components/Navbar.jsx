@@ -8,12 +8,12 @@ import {
 } from "@clerk/clerk-react";
 import "./Navbar.css";
 
-const Navbar = () => {
+const Navbar = ({ theme, onToggleTheme }) => {
   return (
     <nav className="navbar">
       <Link to="/" className="navbar-logo" style={{ textDecoration: "none" }}>
-        <div className="logo-icon"></div>
-        <span>LuminaAI</span>
+        <img src="/logo.png" alt="LearnPath AI" className="logo-icon" />
+        <span className="brand-gradient">LearnPath AI</span>
       </Link>
       <div className="navbar-links">
         <Link to="/assessments">Assessments</Link>
@@ -22,6 +22,10 @@ const Navbar = () => {
         <Link to="/ai-assistant">AI Assistant</Link>
       </div>
       <div className="navbar-actions">
+        <button className="theme-toggle" onClick={onToggleTheme} type="button" aria-label="Toggle theme">
+          {theme === "dark" ? "☀️ Light" : "🌙 Dark"}
+        </button>
+
         <SignedOut>
           <SignInButton mode="modal">
             <button className="btn-signin">Sign In</button>

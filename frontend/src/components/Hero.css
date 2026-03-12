@@ -146,15 +146,19 @@
 .brain-loader {
   width: 150px;
   height: 150px;
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 4rem;
   margin-bottom: 2rem;
-  box-shadow: 0 0 30px rgba(139, 92, 246, 0.5);
   position: relative;
+}
+
+.hero-logo-img {
+  width: 110px;
+  height: 110px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 28px rgba(139, 92, 246, 0.55));
 }
 
 .brain-loader::after {
@@ -189,4 +193,52 @@
   width: 60%;
   height: 100%;
   background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+}
+
+.theme-light .badge {
+  background-color: rgba(15, 23, 42, 0.04);
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  color: #5b21b6;
+}
+
+.theme-light .badge .dot {
+  background-color: #5b21b6;
+}
+
+.theme-light .headline {
+  color: #0f172a;
+}
+
+.theme-light .subheadline,
+.theme-light .trusted-by {
+  color: #475569;
+}
+
+.theme-light .btn-primary {
+  background-color: #111827;
+  color: #ffffff;
+}
+
+.theme-light .btn-secondary {
+  background-color: rgba(15, 23, 42, 0.04);
+  color: #0f172a;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+}
+
+.theme-light .btn-secondary:hover {
+  background-color: rgba(15, 23, 42, 0.08);
+}
+
+.theme-light .avatar {
+  border: 2px solid #f8fafc;
+}
+
+.theme-light .visual-card {
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.08);
+}
+
+.theme-light .loading-bar {
+  background-color: #e2e8f0;
 }

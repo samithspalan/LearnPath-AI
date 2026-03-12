@@ -5,9 +5,6 @@ const Hero = () => {
   return (
     <section className="hero">
       <div className="hero-content">
-        <div className="badge">
-          <span className="dot"></span> NEXT-GEN CAREER ENGINE
-        </div>
         <h1 className="headline">
           Master Your <br />
           Career with <span className="highlight">AI-</span><br />
@@ -15,7 +12,7 @@ const Hero = () => {
         </h1>
         <p className="subheadline">
           Experience a premium educational journey powered by neural intelligence.
-          Lumina AI reconstructs your professional roadmap through continuous assessment and real-time adaptation.
+          <span className="brand-gradient"> LearnPath AI </span>reconstructs your professional roadmap through continuous assessment and real-time adaptation.
         </p>
         
         <div className="hero-actions">
@@ -36,7 +33,7 @@ const Hero = () => {
       <div className="hero-visual">
         <div className="visual-card">
           <div className="brain-loader">
-             <div className="brain-icon">🧠</div>
+             <img src="/logo.png" alt="LearnPath AI" className="hero-logo-img" />
           </div>
           <div className="processing-text">NEURAL_PROCESSING_ACTIVE</div>
           <div className="loading-bar">
