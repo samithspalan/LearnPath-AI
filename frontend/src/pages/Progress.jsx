@@ -3,6 +3,7 @@ import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell,
   Radar, RadarChart, PolarGrid, PolarAngleAxis
 } from 'recharts';
+import { useAuth } from '@clerk/clerk-react';
 import './Pages.css';
 import './Progress.css';
 

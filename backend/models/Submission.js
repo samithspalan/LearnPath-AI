@@ -5,6 +5,7 @@ const submissionSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  // Legacy assessment submissions
   assessmentId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Assessment"
@@ -12,6 +13,22 @@ const submissionSchema = new mongoose.Schema({
   answers: [String],
   score: Number,
   aiFeedback: String,
+  // Quiz / Coding submissions
+  submissionType: {
+    type: String,
+    enum: ['quiz', 'coding'],
+  },
+  // Coding fields
+  code: String,
+  language: String,
+  problemTitle: String,
+  status: {
+    type: String,
+    enum: ['accepted', 'attempted'],
+    default: 'attempted'
+  },
+  // Quiz fields
+  totalQuestions: Number,
   createdAt: {
     type: Date,
     default: Date.now
