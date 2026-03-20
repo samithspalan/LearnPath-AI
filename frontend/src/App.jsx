@@ -15,6 +15,25 @@ function HomeRedirect() {
 }
 
 function App() {
+  const [showIntro, setShowIntro] = useState(true)
+  const [theme, setTheme] = useState(() => localStorage.getItem('learnpath-theme') || 'dark')
+
+  const handleThemeToggle = () => {
+    setTheme((prevTheme) => (prevTheme === 'dark' ? 'light' : 'dark'))
+  }
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowIntro(false)
+    }, 2350)
+
+    return () => clearTimeout(timer)
+  }, [])
+
+  useEffect(() => {
+    localStorage.setItem('learnpath-theme', theme)
+  }, [theme])
+
   return (
     <Router>
       <div className="app-container">

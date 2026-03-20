@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { SignedIn, SignedOut, UserButton, SignInButton } from "@clerk/clerk-react";
 import "./Navbar.css";
 
-const Navbar = () => {
+const Navbar = ({ theme, onToggleTheme }) => {
   const { pathname } = useLocation();
 
   const links = [
@@ -16,8 +16,8 @@ const Navbar = () => {
   return (
     <nav className="navbar">
       <Link to="/" className="navbar-logo" style={{ textDecoration: "none" }}>
-        <div className="logo-icon" />
-        <span>LuminaAI</span>
+        <img src="/logo.png" alt="LearnPath AI" className="logo-icon" />
+        <span className="brand-gradient">LearnPath AI</span>
       </Link>
 
       <div className="navbar-links">
@@ -34,6 +34,10 @@ const Navbar = () => {
       </div>
 
       <div className="navbar-actions">
+        <button className="theme-toggle" onClick={onToggleTheme} type="button" aria-label="Toggle theme">
+          {theme === "dark" ? "🌙 Dark" : "☀️ Light"}
+        </button>
+
         <SignedOut>
           <SignInButton mode="modal">
             <button className="btn-signin">Sign In</button>
