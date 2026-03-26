@@ -40,6 +40,9 @@ function App() {
   return (
     <Router>
       <div className={`app-container theme-${theme}`}>
+        <div className="bg-beam bg-beam-1"></div>
+        <div className="bg-beam bg-beam-2"></div>
+        <div className="bg-beam bg-beam-3"></div>
         <Navbar theme={theme} onToggleTheme={handleThemeToggle} />
         <Routes>
           <Route path="/" element={<HomeRedirect />} />
