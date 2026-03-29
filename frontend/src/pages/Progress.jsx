@@ -155,20 +155,32 @@ export default function Progress() {
           <div className="main-line-chart">
             {mainChartData.length > 0 ? (
               <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={mainChartData}>
+                <AreaChart data={mainChartData}>
+                  <defs>
+                    <linearGradient id="colorScore" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor={COLORS.primary} stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor={COLORS.primary} stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
-                  <XAxis dataKey="date" tick={{ fill: COLORS.muted, fontSize: 11 }} axisLine={false} tickLine={false} />
+                  <XAxis dataKey="date" tick={{ fill: COLORS.muted, fontSize: 11 }} axisLine={false} tickLine={false} dy={10} />
                   <YAxis hide />
-                  <Tooltip contentStyle={{ background: '#000', border: '1px solid #333' }} />
-                  <Line
+                  <Tooltip 
+                    labelFormatter={(label, payload) => payload[0]?.payload?.fullDate || label}
+                    contentStyle={{ background: '#0a0a0c', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', fontSize: '12px' }} 
+                    itemStyle={{ color: COLORS.primary }}
+                  />
+                  <Area
                     type="monotone"
                     dataKey="score"
                     stroke={COLORS.primary}
                     strokeWidth={3}
+                    fillOpacity={1}
+                    fill="url(#colorScore)"
                     dot={{ fill: COLORS.primary, r: 4, strokeWidth: 2, stroke: COLORS.primary }}
                     activeDot={{ r: 6, strokeWidth: 0 }}
                   />
-                </LineChart>
+                </AreaChart>
               </ResponsiveContainer>
             ) : (
               <div style={{ height: 300, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -207,9 +219,13 @@ export default function Progress() {
           {codingQuestionsData.length > 0 ? (
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={codingQuestionsData}>
-                <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: COLORS.muted, fontSize: 10 }} />
+                <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: COLORS.muted, fontSize: 10 }} dy={5} />
                 <YAxis hide />
-                <Bar dataKey="solved" fill={COLORS.primary} radius={[4, 4, 0, 0]} />
+                <Tooltip 
+                  cursor={{ fill: 'rgba(255,255,255,0.03)' }}
+                  contentStyle={{ background: '#0a0a0c', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', fontSize: '12px' }}
+                />
+                <Bar dataKey="solved" fill={COLORS.primary} radius={[4, 4, 0, 0]} barSize={30} />
               </BarChart>
             </ResponsiveContainer>
           ) : (
@@ -226,14 +242,17 @@ export default function Progress() {
             <ResponsiveContainer width="100%" height={200}>
               <LineChart data={mcqData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
-                <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: COLORS.muted, fontSize: 10 }} />
+                <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: COLORS.muted, fontSize: 10 }} dy={5} />
                 <YAxis hide />
+                <Tooltip 
+                  contentStyle={{ background: '#0a0a0c', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', fontSize: '12px' }}
+                />
                 <Line
                   type="monotone"
                   dataKey="solved"
-                  stroke={COLORS.primary}
+                  stroke={COLORS.progress}
                   strokeWidth={2}
-                  dot={{ fill: COLORS.primary, r: 3 }}
+                  dot={{ fill: COLORS.progress, r: 3 }}
                 />
               </LineChart>
             </ResponsiveContainer>

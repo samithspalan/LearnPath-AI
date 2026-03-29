@@ -88,7 +88,7 @@ export default function LearningPlans() {
           body: JSON.stringify(form)
         });
       }
-      
+
       // Delay for effect
       await new Promise(r => setTimeout(r, 1500));
       setGenerated(true);
@@ -106,9 +106,24 @@ export default function LearningPlans() {
   const canNext2 = form.stack.length > 0;
   const canGenerate = form.goal && form.hoursPerWeek;
 
+  const dynamicPlan = () => {
+    const stackList = form.stack && form.stack.length > 0 ? form.stack : ['Core Tech'];
+    const mainTech = stackList[0];
+    const secTech = stackList.length > 1 ? stackList[1] : 'Ecosystem';
+    const roleName = form.role || 'Software Engineer';
+    const topStack = stackList.slice(0, 3).join(', ');
+
+    return [
+      { week: 'Week 1–2', title: `Foundation in ${roleName}`, tasks: [`Core concepts in ${roleName} principles`, `Deep dive into ${mainTech} fundamentals`, 'Algorithm & logic building basics'], color: '#6366f1' },
+      { week: 'Week 3–4', title: `Mastering Your Stack`, tasks: [`Advanced architectural patterns in ${mainTech}`, `Integrating ${secTech} into your workflow`, 'Performance tuning and best practices'], color: '#8b5cf6' },
+      { week: 'Week 5–6', title: 'Interview Preparation', tasks: ['Data structures problem solving', `Mock system design for ${roleName}`, 'Behavioral question practice'], color: '#a78bfa' },
+      { week: 'Week 7–8', title: 'Real-world Projects', tasks: [`Build a complex portfolio project utilizing ${topStack}`, 'Implement CI/CD pipeline and deployment', 'Contribute to open source or technical blogging'], color: '#c4b5fd' },
+    ];
+  };
+
   return (
     <div className="page-container">
-      <h1 className="page-title">Personalized Learning Plans</h1>
+      <h1 className="page-title" style={{ textAlign: 'center', marginBottom: '3rem' }}>Personalized Learning Plans</h1>
 
       {!generated ? (
         <div className="lp-form-wrapper">
@@ -194,18 +209,23 @@ export default function LearningPlans() {
         </div>
       ) : (
         <div className="lp-result">
-          <div className="lp-result-header">
-            <div>
+          <div className="lp-result-header" style={{ alignItems: 'center' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               <h2 style={{ color: 'white', margin: 0 }}>Your 8-Week Roadmap</h2>
-              <p style={{ color: '#9ca3af', margin: '0.4rem 0 0' }}>{form.role} · {form.experience} · {form.hoursPerWeek}/week</p>
+              <p style={{ color: '#9ca3af', margin: 0 }}>{form.role} · {form.experience} · {form.hoursPerWeek}/week</p>
+              <div className="lp-stack-chips" style={{ marginTop: '0.5rem' }}>
+                {form.stack.slice(0, 5).map(t => <span key={t} className="lp-chip">{t}</span>)}
+                {form.stack.length > 5 && <span className="lp-chip">+{form.stack.length - 5}</span>}
+              </div>
             </div>
-            <div className="lp-stack-chips">
-              {form.stack.slice(0, 5).map(t => <span key={t} className="lp-chip">{t}</span>)}
-              {form.stack.length > 5 && <span className="lp-chip">+{form.stack.length - 5}</span>}
+            
+            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+              <button className="lp-back" style={{ padding: '0.6rem 1rem', fontSize: '0.85rem', margin: 0 }} onClick={() => { setGenerated(false); setStep(1); }}>← Regenerate Plan</button>
+              <button className="btn-primary" style={{ padding: '0.6rem 1rem', fontSize: '0.85rem' }} onClick={() => navigate('/assessments')}>Test Your Skillset</button>
             </div>
           </div>
           <div className="lp-roadmap">
-            {GENERATED_PLAN.map((phase, i) => (
+            {dynamicPlan().map((phase, i) => (
               <div key={i} className="lp-phase">
                 <div className="lp-phase-line" style={{ background: phase.color }} />
                 <div className="lp-phase-content">
@@ -217,10 +237,6 @@ export default function LearningPlans() {
                 </div>
               </div>
             ))}
-          </div>
-          <div className="lp-row" style={{ marginTop: '1.5rem' }}>
-            <button className="lp-back" onClick={() => { setGenerated(false); setStep(1); }}>← Regenerate Plan</button>
-            <button className="btn-primary" onClick={() => navigate('/assessments')}>Test Your Skillset</button>
           </div>
         </div>
       )}

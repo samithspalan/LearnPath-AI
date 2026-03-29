@@ -28,25 +28,30 @@
   right: 0;
   width: calc(100% - 36px);
   height: 2px;
-  background: rgba(255,255,255,0.07);
+  background: rgba(255, 255, 255, 0.07);
   left: 36px;
 }
 
-.lp-step.active { color: #a78bfa; }
-.lp-step.done { color: #22c55e; }
+.lp-step.active {
+  color: #a78bfa;
+}
+
+.lp-step.done {
+  color: #22c55e;
+}
 
 .lp-step-num {
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.06);
+  background: rgba(255, 255, 255, 0.06);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 0.8rem;
   font-weight: 700;
   flex-shrink: 0;
-  border: 1.5px solid rgba(255,255,255,0.1);
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
 }
 
 .lp-step.active .lp-step-num {
@@ -63,8 +68,8 @@
 
 /* ===== Card ===== */
 .lp-card {
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
   padding: 2rem 2.5rem;
 }
@@ -98,8 +103,8 @@
 .lp-input {
   width: 100%;
   padding: 0.75rem 1rem;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 10px;
   color: white;
   font-size: 0.95rem;
@@ -108,7 +113,9 @@
   transition: border-color 0.2s;
 }
 
-.lp-input::placeholder { color: #6b7280; }
+.lp-input::placeholder {
+  color: #6b7280;
+}
 
 .lp-input:focus {
   border-color: #8b5cf6;
@@ -127,8 +134,8 @@
   align-items: center;
   gap: 0.4rem;
   padding: 0.5rem 1rem;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   color: #9ca3af;
   font-size: 0.88rem;
@@ -136,7 +143,9 @@
   transition: all 0.15s;
 }
 
-.lp-radio input[type="radio"] { display: none; }
+.lp-radio input[type="radio"] {
+  display: none;
+}
 
 .lp-radio.selected {
   background: rgba(139, 92, 246, 0.15);
@@ -154,8 +163,8 @@
 
 .lp-tag {
   padding: 0.4rem 1rem;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 999px;
   color: #9ca3af;
   font-size: 0.85rem;
@@ -163,7 +172,10 @@
   transition: all 0.15s;
 }
 
-.lp-tag:hover { border-color: #8b5cf6; color: #c4b5fd; }
+.lp-tag:hover {
+  border-color: #8b5cf6;
+  color: #c4b5fd;
+}
 
 .lp-tag.selected {
   background: rgba(139, 92, 246, 0.2);
@@ -184,15 +196,18 @@
   align-items: flex-start;
   gap: 0.25rem;
   padding: 1rem 1.2rem;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.15s;
   text-align: left;
 }
 
-.lp-goal:hover { border-color: #8b5cf6; background: rgba(139, 92, 246, 0.07); }
+.lp-goal:hover {
+  border-color: #8b5cf6;
+  background: rgba(139, 92, 246, 0.07);
+}
 
 .lp-goal.selected {
   border-color: #8b5cf6;
@@ -224,7 +239,7 @@
 
 .lp-back {
   background: transparent;
-  border: 1px solid rgba(255,255,255,0.12);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   color: #9ca3af;
   padding: 0.65rem 1.4rem;
   border-radius: 8px;
@@ -235,7 +250,7 @@
 }
 
 .lp-back:hover {
-  border-color: rgba(255,255,255,0.25);
+  border-color: rgba(255, 255, 255, 0.25);
   color: white;
 }
 
@@ -252,8 +267,8 @@
   flex-wrap: wrap;
   gap: 1rem;
   margin-bottom: 2rem;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 14px;
   padding: 1.5rem 2rem;
 }
@@ -275,14 +290,78 @@
 }
 
 .lp-roadmap {
-  display: flex;
-  flex-direction: column;
-  gap: 1.2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Unified spacing + theme overrides */
+.lp-form-wrapper,
+.lp-result {
+  max-width: 980px;
+}
+
+.lp-card,
+.lp-result-header,
+.lp-phase {
+  background: var(--lp-surface);
+  border: 1px solid var(--lp-border);
+  border-radius: var(--lp-radius);
+  box-shadow: var(--lp-shadow);
+}
+
+.lp-card {
+  padding: clamp(1rem, 2.3vw, 1.55rem);
+}
+
+.lp-card-title,
+.lp-goal-label,
+.lp-phase-title {
+  color: var(--lp-heading);
+}
+
+.lp-sub,
+.lp-field label,
+.lp-goal-desc,
+.lp-step,
+.lp-back {
+  color: var(--lp-muted);
+}
+
+.lp-input,
+.lp-radio,
+.lp-tag,
+.lp-goal,
+.lp-step-num {
+  border-color: var(--lp-border);
+  background: color-mix(in srgb, var(--lp-surface-strong) 86%, transparent);
+  color: var(--lp-text);
+}
+
+.lp-chip {
+  background: color-mix(in srgb, var(--lp-accent-2) 16%, transparent);
+  border-color: color-mix(in srgb, var(--lp-accent-2) 40%, transparent);
+  color: var(--lp-text);
+}
+
+.lp-row {
+  gap: 0.75rem;
+}
+
+@media (max-width: 900px) {
+  .lp-goals {
+    grid-template-columns: 1fr;
+  }
+
+  .lp-row {
+    flex-wrap: wrap;
+  }
 }
 
 .lp-phase {
   display: flex;
   gap: 1rem;
+  height: 100%;
 }
 
 .lp-phase-line {
@@ -293,10 +372,12 @@
 
 .lp-phase-content {
   flex: 1;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 12px;
   padding: 1.2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .lp-phase-week {
@@ -320,4 +401,5 @@
   color: #9ca3af;
   font-size: 0.9rem;
   line-height: 1.9;
+  flex-grow: 1;
 }

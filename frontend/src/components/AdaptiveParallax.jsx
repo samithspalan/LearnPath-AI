@@ -2,10 +2,10 @@ import React, { useEffect, useState, useRef } from 'react';
 import './AdaptiveParallax.css';
 
 const ORBIT_FEATURES = [
-  { title: 'Skill Badging', icon: '🎖️' },
-  { title: 'Job Matching', icon: '💼' },
-  { title: 'Live Mentors', icon: '👥' },
-  { title: 'Code Insights', icon: '💻' }
+  { title: 'Code Challenges', icon: '⚡' },
+  { title: 'AI Coaching', icon: '🤖' },
+  { title: 'Smart Plans', icon: '🗺️' },
+  { title: 'Skill Tracking', icon: '📊' }
 ];
 
 const AdaptiveParallax = () => {
@@ -38,9 +38,9 @@ const AdaptiveParallax = () => {
         <div className="solar-core">
           <div className="brain-glow"></div>
           <div className="solar-core__inner">
-             <span className="core-badge">ADAPTIVE AI</span>
-             <h2>Real-time Assessments</h2>
-             <p>Our neural engine maps your progress in a dynamic 3D graph.</p>
+             <span className="core-badge">INTELLIGENT CORE</span>
+             <h2>Neural Learning Engine</h2>
+             <p>Our adaptive AI automatically orchestrates your educational journey and dynamically maps your skill progression.</p>
           </div>
         </div>
 

@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './AIRoadmap.css';
 
 const CARD_HOLD_MS = 600;
@@ -9,29 +10,29 @@ const RESET_GAP_MS = 100;
 const DEFAULT_STEPS = [
   {
     id: 'n1',
-    title: 'Structured Learning',
+    title: 'Structured Learning Plan',
     tooltip: 'Map core fundamentals, interview topics, and milestones in a focused plan.',
     icon: 'network',
     slot: 1,
   },
   {
     id: 'n2',
-    title: 'Focused Practice',
-    tooltip: 'Daily targeted drills with difficulty ramp-ups and timed challenge sessions.',
+    title: 'Skill Analysis',
+    tooltip: 'Analyze your abilities through targeted drills and coding challenges.',
     icon: 'keyboard',
     slot: 2,
   },
   {
     id: 'n3',
-    title: 'Expert Feedback',
-    tooltip: 'Get looped feedback from mentors, then iterate fast on weak spots.',
+    title: 'AI Assistance',
+    tooltip: 'Get looped feedback from neural mentors, then iterate fast on weak spots.',
     icon: 'feedback',
     slot: 3,
   },
   {
     id: 'n4',
-    title: 'Dream Offer',
-    tooltip: 'Convert preparation into interviews, strong rounds, and your target offer.',
+    title: 'Improved Progress',
+    tooltip: 'Continuously track your growth and confidently secure your dream offer.',
     icon: 'trophy',
     slot: 4,
   },
@@ -98,6 +99,7 @@ const getAnchorPoint = (rect, rootRect, anchor) => {
 };
 
 const AIRoadmap = ({ steps = DEFAULT_STEPS }) => {
+  const navigate = useNavigate();
   const containerRef = useRef(null);
   const diagramRef = useRef(null);
   const cardsRef = useRef({});
@@ -427,6 +429,16 @@ const AIRoadmap = ({ steps = DEFAULT_STEPS }) => {
             <h3>{card.title}</h3>
           </article>
         ))}
+      </div>
+      
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '4rem', position: 'relative', zIndex: 10 }}>
+        <button 
+          className="btn-primary"
+          style={{ borderRadius: '999px', padding: '0.85rem 2.8rem', fontSize: '1rem', fontWeight: 700 }}
+          onClick={() => navigate('/learning-plans')}
+        >
+          Start your journey
+        </button>
       </div>
     </section>
   );

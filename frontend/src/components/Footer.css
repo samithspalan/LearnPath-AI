@@ -30,11 +30,13 @@
 }
 
 .footer-brand img {
-  width: 36px;
-  height: 36px;
-  object-fit: contain;
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  transform: scale(1.25);
+  clip-path: inset(10%);
   filter: saturate(0);
-  opacity: 0.8;
+  opacity: 1;
 }
 
 .footer-brand h4 {

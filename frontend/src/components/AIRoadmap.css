@@ -20,7 +20,7 @@
     var(--dark-bg);
   padding: clamp(2rem, 4vw, 4rem);
   overflow: hidden;
-  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Manrope', system-ui, Avenir, Helvetica, Arial, sans-serif;
   z-index: 1;
 }
 

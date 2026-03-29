@@ -13,7 +13,7 @@ const MissingKeyError = () => (
   <div style={{
     display: 'flex', flexDirection: 'column', alignItems: 'center',
     justifyContent: 'center', minHeight: '100vh', background: '#050508',
-    color: 'white', fontFamily: 'Inter, sans-serif', textAlign: 'center', padding: '2rem'
+    color: 'white', fontFamily: 'Manrope, sans-serif', textAlign: 'center', padding: '2rem'
   }}>
     <div style={{
       background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.4)',

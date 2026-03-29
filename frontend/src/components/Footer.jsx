@@ -16,33 +16,24 @@ export default function Footer() {
 
         <div className="footer-links-group">
           <div className="footer-column">
-            <h5>Platform</h5>
+            <h5>Navigation</h5>
             <Link to="/">Home</Link>
-            <Link to="/learning-plans">Pathways</Link>
             <Link to="/assessments">Assessments</Link>
+            <Link to="/learning-plans">Learning Plans</Link>
             <Link to="/progress">Progress</Link>
-          </div>
-          
-          <div className="footer-column">
-            <h5>Company</h5>
+            <Link to="/ai-assistant">AI Assistant</Link>
             <Link to="/about">About Us</Link>
-            <a href="#careers">Careers</a>
-            <a href="#blog">Blog</a>
-            <a href="#contact">Contact</a>
           </div>
 
           <div className="footer-column">
             <h5>Legal</h5>
             <a href="#privacy">Privacy Policy</a>
-            <a href="#terms">Terms of Service</a>
-            <a href="#cookies">Cookies</a>
           </div>
         </div>
       </div>
 
       <div className="footer-bottom">
-        <p className="footer-copy">© {new Date().getFullYear()} LearnPath AI.</p>
-        <p className="footer-tagline">Built for intentional learning. Open Source & Proud.</p>
+        <p className="footer-copy">© {new Date().getFullYear()} LearnPath AI. All rights reserved.</p>
       </div>
     </footer>
   );

@@ -88,7 +88,7 @@ const AiAssistant = () => {
 
     try {
       const token = await getToken();
-      const res = await fetch(`${API_BASE}/api/assessment/ai-analysis`, {
+      const res = await fetch(`${API_BASE}/api/assessment/ai-analysis${force ? '?refresh=true' : ''}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -120,79 +120,123 @@ const AiAssistant = () => {
     }
   }, [isSignedIn, userId, getToken, setLoading, setAnalysis, setIsManualRefresh]);
 
-  // Notes CRUD
+  // Stable ref for getToken so fetchNotes doesn't recreate on every render
+  const getTokenRef = useRef(getToken);
+  useEffect(() => { getTokenRef.current = getToken; }, [getToken]);
+
+  // Notes CRUD — fetchNotes is stable (no getToken in deps)
   const fetchNotes = useCallback(async () => {
     if (!isSignedIn || !userId) return;
     try {
-      const token = await getToken();
+      const token = await getTokenRef.current();
+      console.log('[Fetch Notes] Getting notes for user:', userId);
+      
       const res = await fetch(`${API_BASE}/api/notes`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+      
       if (res.ok) {
         const data = await res.json();
+        console.log('[Fetch Notes] Received', data.length, 'notes');
         setNotes(data);
+      } else {
+        console.error('[Fetch Notes] Failed with status:', res.status);
+        const errorData = await res.json();
+        console.error('[Fetch Notes] Error:', errorData);
       }
-    } catch (err) { console.error("Notes fetch error:", err); }
-  }, [isSignedIn, userId, getToken]);
+    } catch (err) { 
+      console.error('Notes fetch error:', err); 
+    }
+  }, [isSignedIn, userId]); // stable — getToken accessed via ref
 
   const saveNote = async (e) => {
-    e.preventDefault();
+    if (e && typeof e.preventDefault === 'function') e.preventDefault();
     if (!noteContent.trim() || !isSignedIn) return;
+    
     try {
-      const token = await getToken();
+      const token = await getTokenRef.current();
       const method = editingNote ? 'PUT' : 'POST';
-      const url = editingNote ? `${API_BASE}/api/notes/${editingNote._id}` : `${API_BASE}/api/notes`;
-      
+      const url = editingNote
+        ? `${API_BASE}/api/notes/${editingNote._id}`
+        : `${API_BASE}/api/notes`;
+
+      console.log(`[Note Save] ${method} ${url}`, { title: noteTitle, contentLength: noteContent.length });
+
       const res = await fetch(url, {
         method,
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}` 
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ title: noteTitle, content: noteContent }),
+        body: JSON.stringify({ 
+          title: noteTitle || 'Untitled Note', 
+          content: noteContent 
+        }),
       });
 
+      const data = await res.json();
+      
+      console.log(`[Note Save] Response:`, { status: res.status, ok: res.ok, data });
+
       if (res.ok) {
-        const savedData = await res.json();
-        
-        // Optimistic update: instantly refresh the local list without a full reload
+        // Optimistic update - add newly saved note
         if (editingNote) {
-          setNotes(prev => prev.map(n => n._id === savedData._id ? savedData : n));
+          setNotes(prev => prev.map(n => n._id === data._id ? data : n));
+          console.log('[Note Save] Updated existing note');
         } else {
-          setNotes(prev => [savedData, ...prev]);
+          setNotes(prev => [data, ...prev]);
+          console.log('[Note Save] Added new note to list');
         }
-        
-        // Force clear all inputs
         setNoteTitle('');
         setNoteContent('');
         setEditingNote(null);
-        
-        // Fetch to ensure background sync
-        fetchNotes();
+        setError('');
+      } else {
+        const errorMessage = data.error || `Failed to save note (${res.status})`;
+        const errorDetails = data.details ? ` - ${data.details}` : '';
+        console.error('Note save failed:', errorMessage + errorDetails);
+        setError(errorMessage + errorDetails);
       }
-    } catch (err) { console.error("Note save error:", err); }
+    } catch (err) { 
+      console.error('Note save error:', err);
+      setError('Failed to save note. Please try again.');
+    }
   };
 
   const deleteNote = async (id) => {
     if (!isSignedIn) return;
     try {
-      const token = await getToken();
+      const token = await getTokenRef.current();
+      
+      console.log('[Note Delete] DELETE /api/notes/' + id);
+      
       const res = await fetch(`${API_BASE}/api/notes/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });
+      
+      console.log('[Note Delete] Response:', { status: res.status, ok: res.ok });
+      
       if (res.ok) {
         setNotes(prev => prev.filter(n => n._id !== id));
-        fetchNotes(); 
+        setError('');
+        console.log('[Note Delete] Note removed from list');
+      } else {
+        const data = await res.json();
+        const errorMessage = data.error || `Failed to delete note (${res.status})`;
+        const errorDetails = data.details ? ` - ${data.details}` : '';
+        console.error('Note delete failed:', errorMessage + errorDetails);
+        setError(errorMessage + errorDetails);
       }
-    } catch (err) { console.error("Note delete error:", err); }
+    } catch (err) { 
+      console.error('Note delete error:', err);
+      setError('Failed to delete note. Please try again.');
+    }
   };
 
+  // Fetch notes once on sign-in — fetchNotes is now stable so no infinite loop
   useEffect(() => {
-    if (isSignedIn) {
-      // Analysis is now strictly manual (requested: donot update automatically)
-      fetchNotes();
-    }
+    if (isSignedIn) fetchNotes();
   }, [isSignedIn, fetchNotes]);
 
   const sendChatMessage = useCallback(async () => {
@@ -429,81 +473,100 @@ const AiAssistant = () => {
             <div className="note-editor-pane">
               <div className="note-shell">
                 <div className="note-header">
-                  <h3>{editingNote ? 'Refining Technical Entry' : 'Captured Knowledge Entry'}</h3>
+                  <h3>{editingNote ? 'Editing Note' : 'Your Notes'}</h3>
+                  <span className="notes-count-badge">{notes.length} saved</span>
                 </div>
-                <div className="note-input-wrap">
-                  <div className="note-inputs">
-                    <input 
-                      type="text" 
-                      placeholder="Knowledge Title (e.g., GraphQL Schema Design)..." 
-                      value={noteTitle}
-                      onChange={(e) => setNoteTitle(e.target.value)}
-                    />
-                    <textarea 
-                      placeholder="Capture technical insights..."
-                      value={noteContent}
-                      onChange={(e) => setNoteContent(e.target.value)}
-                      rows={4}
-                    />
-                  </div>
-                  <button 
-                    className="send-btn" 
-                    onClick={saveNote} 
-                    disabled={!noteContent.trim()}
-                    title={editingNote ? 'Sync Update' : 'Store Intelligence'}
-                  >
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="20" height="20">
-                      <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
-                      <polyline points="17 21 17 13 7 13 7 21"></polyline>
-                      <polyline points="7 3 7 8 15 8"></polyline>
-                    </svg>
-                  </button>
-                </div>
-                {editingNote && (
-                  <div className="edit-cancel-wrap">
-                    <button className="btn-ghost" onClick={() => { setEditingNote(null); setNoteTitle(''); setNoteContent(''); }}>Cancel Selection</button>
+
+                {error && (
+                  <div className="error-banner" style={{ marginBottom: '1rem', padding: '0.75rem 1rem', backgroundColor: '#fee', borderRadius: '0.5rem', color: '#c00', fontSize: '0.9rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span>{error}</span>
+                    <button onClick={() => setError('')} style={{ background: 'none', border: 'none', color: '#c00', cursor: 'pointer', fontSize: '1.2rem' }}>×</button>
                   </div>
                 )}
 
-                {/* Recent Notes List Integrated Below */}
-                <div className="recent-notes-integrated">
-                  <div className="notes-header-row">
-                    <h3>Recent Insights</h3>
-                    <span className="notes-count">{notes.length} Captured</span>
-                  </div>
-                  
+                {/* Notes feed - displays notes like chat messages */}
+                <div className="notes-feed">
                   {notes.length === 0 ? (
-                    <div className="empty-notes-prompt small">
-                      Zero technical insights stored in current knowledge base.
+                    <div className="empty-notes-prompt">
+                      No notes yet. Type below and hit send to capture your first insight.
                     </div>
                   ) : (
-                    <div className="notes-scroll-area">
-                      {notes.map((note) => (
-                        <div key={note._id} className="note-card-item mini">
-                          <div className="note-card-content" onClick={() => {
-                            setEditingNote(note);
-                            setNoteTitle(note.title);
-                            setNoteContent(note.content);
-                          }}>
-                            <div className="note-card-top">
-                              <span className="note-card-title">{note.title}</span>
-                              <span className="note-card-date">{new Date(note.updatedAt).toLocaleDateString()}</span>
-                            </div>
-                            <p className="note-card-snippet">{note.content}</p>
+                    notes.map((note) => (
+                      <div key={note._id} className="note-message-card">
+                        <button
+                          className="note-delete-btn"
+                          title="Delete note"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (window.confirm('Delete this note?')) deleteNote(note._id);
+                          }}
+                        >
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="15" height="15">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+                            <path d="M10 11v6"></path>
+                            <path d="M14 11v6"></path>
+                            <path d="M9 6V4h6v2"></path>
+                          </svg>
+                        </button>
+                        <div className="note-message-body" onClick={() => {
+                          setEditingNote(note);
+                          setNoteTitle(note.title);
+                          setNoteContent(note.content);
+                        }}>
+                          <div className="note-message-top">
+                            {note.title && <span className="note-message-title">{note.title}</span>}
+                            <span className="note-message-date">
+                              {new Date(note.updatedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                            </span>
                           </div>
-                          <button 
-                            className="delete-action-btn" 
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              if (window.confirm("Delete this technical insight?")) deleteNote(note._id);
-                            }}
-                          >
-                            ×
-                          </button>
+                          <p className="note-message-text">{note.content}</p>
                         </div>
-                      ))}
+                      </div>
+                    ))
+                  )}
+                </div>
+
+                {/* Input section - always at the bottom */}
+                <div className="note-compose-area">
+                  {editingNote && (
+                    <div className="note-edit-banner">
+                      ✏️ Editing note — <button className="btn-ghost-inline" onClick={() => { setEditingNote(null); setNoteTitle(''); setNoteContent(''); }}>Cancel</button>
                     </div>
                   )}
+                  <div className="note-input-wrap">
+                    <div className="note-inputs">
+                      <input
+                        type="text"
+                        placeholder="Title (optional)..."
+                        value={noteTitle}
+                        onChange={(e) => setNoteTitle(e.target.value)}
+                      />
+                      <textarea
+                        placeholder="Write a note or insight..."
+                        value={noteContent}
+                        onChange={(e) => setNoteContent(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && !e.shiftKey && noteContent.trim()) {
+                            e.preventDefault();
+                            saveNote(e);
+                          }
+                        }}
+                        rows={3}
+                      />
+                    </div>
+                    <button
+                      className="send-btn"
+                      onClick={saveNote}
+                      disabled={!noteContent.trim()}
+                      title={editingNote ? 'Update Note' : 'Save Note'}
+                    >
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="20" height="20">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                      </svg>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

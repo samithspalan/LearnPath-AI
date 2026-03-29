@@ -4,8 +4,8 @@ import './BentoGrid.css';
 
 const BENTO_ITEMS = [
   {
-    title: 'Self-Evolving Logic',
-    description: 'Our proprietary LLM logic re-factors your path in real-time, responding to every quiz and code submit.',
+    title: 'Dynamic Assessments',
+    description: 'Take adaptive coding assessments to establish an accurate baseline of your skills and identify areas for growth.',
     icon: (
       <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
         <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
@@ -15,8 +15,8 @@ const BENTO_ITEMS = [
     accent: 'purple',
   },
   {
-    title: 'Neural Gap Mapping',
-    description: 'Scan 1,000+ data points to pinpoint exactly why you struggle with certain concepts.',
+    title: 'Curated Learning Plans',
+    description: 'Follow structurally generated, weekly roadmaps tailored precisely to bridge your skill gaps.',
     icon: (
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <circle cx="12" cy="12" r="10" />
@@ -27,24 +27,23 @@ const BENTO_ITEMS = [
     accent: 'blue',
   },
   {
-    title: 'Synthetic Mocks',
-    description: 'Experience voice-activated mock interviews with adaptive difficulty levels.',
+    title: 'AI Mentorship Assistant',
+    description: 'Chat with our intelligent tutor for real-time code reviews, debug assistance, and career strategies.',
     icon: (
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
-        <path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4M8 23h8" />
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
       </svg>
     ),
     size: 'small',
     accent: 'purple',
   },
   {
-    title: 'Architect-Level Insights',
-    description: 'Get deep feedback on your code architecture, not just syntax. Master clean code.',
+    title: 'Rich Progress Analytics',
+    description: 'Track every milestone of your journey visually with comprehensive dashboards to ensure you hit your goals.',
     icon: (
       <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <polyline points="16 18 22 12 16 6" />
-        <polyline points="8 6 2 12 8 18" />
+        <polyline points="3 3 3 21 21 21" />
+        <polyline points="3 21 9 14 15 18 21 9" />
       </svg>
     ),
     size: 'medium',
@@ -61,7 +60,7 @@ const BentoGrid = () => {
       className={`bento-section ${bentoVisible ? 'is-revealed' : ''}`}
     >
       <div className="section-header">
-        <h2>High-Velocity Learning</h2>
+        <h2>Core Platform Features</h2>
       </div>
 
       <div className="bento-grid-premium">

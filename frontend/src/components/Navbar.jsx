@@ -36,7 +36,7 @@ const Navbar = () => {
 
       <div className="navbar-actions">
         <SignedOut>
-          <SignInButton mode="modal">
+          <SignInButton mode="modal" fallbackRedirectUrl="/learning-plans" forceRedirectUrl="/learning-plans" signUpFallbackRedirectUrl="/learning-plans">
             <button className="btn-signin">Sign In</button>
           </SignInButton>
         </SignedOut>

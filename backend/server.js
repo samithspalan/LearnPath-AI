@@ -152,6 +152,15 @@ app.get("/agent/activity", (req, res) => {
   }
 });
 
+// Global Error Handler (must be after all routes)
+app.use((err, req, res, next) => {
+  console.error("Error:", err);
+  res.status(err.status || 500).json({
+    error: err.message || "Internal Server Error",
+    details: process.env.NODE_ENV === 'development' ? err.stack : undefined
+  });
+});
+
 // Database Connection and Server Start
 const PORT = process.env.PORT || 3000;
 const MONGOURL = process.env.MONGOURL;

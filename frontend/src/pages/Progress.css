@@ -3,7 +3,7 @@
   max-width: 1300px;
   margin: 0 auto;
   color: #fff;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Manrope', sans-serif;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -253,4 +253,50 @@
 
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+/* Unified spacing + theme overrides */
+.progress-dashboard {
+  padding: clamp(1rem, 2.2vw, 1.6rem);
+  max-width: 1260px;
+  margin: 0 auto;
+  gap: 1rem;
+  color: var(--lp-text);
+}
+
+.main-chart-card,
+.profile-widget,
+.bottom-card,
+.mini-stat-box,
+.sidebar-stat-box {
+  background: var(--lp-surface) !important;
+  border-color: var(--lp-border) !important;
+  color: var(--lp-text) !important;
+  box-shadow: var(--lp-shadow);
+}
+
+.title-group p,
+.mini-stat-box .label,
+.sidebar-stat-box .label,
+.val-row .status,
+.val-row .total {
+  color: var(--lp-muted) !important;
+}
+
+.title-group h2,
+.mini-stat-box .value,
+.bottom-card h3 {
+  color: var(--lp-heading) !important;
+}
+
+.dashboard-top-row,
+.dashboard-bottom-row {
+  gap: 1rem;
+}
+
+@media (max-width: 980px) {
+  .dashboard-top-row,
+  .dashboard-bottom-row {
+    flex-direction: column;
+  }
 }

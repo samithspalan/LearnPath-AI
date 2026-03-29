@@ -328,6 +328,7 @@ ${JSON.stringify(payload, null, 2)}
 
 Return only valid JSON with this exact shape:
 {
+  "level": "A short descriptive level or status (e.g., 'Optimization Ready', 'Concept Master', 'Needs Refactoring')",
   "summary": "One short personalized paragraph",
   "improvementSuggestions": ["3 concise actions"],
   "bestPractices": ["3 concise best practices"],

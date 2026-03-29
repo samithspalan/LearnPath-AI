@@ -8,6 +8,18 @@ import './Assessments.css';
 
 loader.config({ monaco });
 
+monaco.editor.defineTheme('learnpath-dark', {
+  base: 'vs-dark',
+  inherit: true,
+  rules: [],
+  colors: {
+    'editor.background': '#06070b',
+    'editorGutter.background': '#06070b',
+    'minimap.background': '#06070b',
+    'editor.lineHighlightBackground': '#0b0d12',
+  },
+});
+
 const API_BASE = 'http://localhost:3000';
 const QUIZ_DRAFT_KEY = 'assessments_quiz_draft_v1';
 const CODE_DRAFT_KEY = 'assessments_code_draft_v1';
@@ -350,9 +362,14 @@ export default function Assessments({ theme = 'dark' }) {
   const [output, setOutput]     = useState(null);
   const [executingAction, setExecutingAction] = useState(null); // 'run', 'submit', or null
   const [submitResult, setSubmitResult] = useState(null);
+  const [activeTestCase, setActiveTestCase] = useState(0);
+  const [isTestPanelOpen, setIsTestPanelOpen] = useState(false);
+  const [solvedProblems, setSolvedProblems] = useState([]);
   const isProcessingRef = React.useRef(false);
 
   const q = quizQuestions[current] || quizQuestions[0];
+  const hasExecutionResult = Boolean(output || submitResult || executingAction);
+  const shouldRenderTestPanel = hasExecutionResult || isTestPanelOpen;
 
   const renderCoachingPanel = (coaching) => {
     if (!coaching) return null;
@@ -445,6 +462,7 @@ export default function Assessments({ theme = 'dark' }) {
     setLanguage(lang);
     setCode(problem.code[lang.value]);
     setOutput(null); setSubmitResult(null);
+    setIsTestPanelOpen(false);
   };
 
   const handleProblemChange = (e) => {
@@ -452,6 +470,7 @@ export default function Assessments({ theme = 'dark' }) {
     setProblem(p);
     setCode(p.code[language.value]);
     setOutput(null); setSubmitResult(null);
+    setIsTestPanelOpen(false);
   };
 
   const handleRun = async (e) => {
@@ -462,6 +481,8 @@ export default function Assessments({ theme = 'dark' }) {
     setExecutingAction('run');
     setSubmitResult(null);
     setOutput(null);
+    setIsTestPanelOpen(true);
+    setActiveTestCase(0);
     
     try {
       // Mock execution for demo
@@ -490,6 +511,8 @@ export default function Assessments({ theme = 'dark' }) {
     setExecutingAction('submit');
     setSubmitResult(null);
     setOutput(null);
+    setIsTestPanelOpen(true);
+    setActiveTestCase(0);
     
     try {
       const submitCases = problem.examples.map((ex, idx) => ({
@@ -518,12 +541,14 @@ export default function Assessments({ theme = 'dark' }) {
             type: 'submit',
             coaching: data.coaching || null,
           });
+          setSolvedProblems(prev => [...prev.filter(id => id !== problem.id), problem.id]);
           localStorage.setItem('learning_activity_updated', 'true');
         } else {
           setSubmitResult({ status: 'Error', error: data.error || 'Submission failed', type: 'submit' });
         }
       } else {
         setSubmitResult({ status: 'Accepted', runtime: '68 ms', memory: '42.3 MB', beats: '87%', saved: false, testCases: submitCases, type: 'submit' });
+        setSolvedProblems(prev => [...prev.filter(id => id !== problem.id), problem.id]);
       }
     } catch (err) {
       console.error("Submission error:", err);
@@ -577,12 +602,6 @@ export default function Assessments({ theme = 'dark' }) {
       
       {activeTab === 'quiz' && (
         <div className="quiz-wrapper">
-          {selectedTechStack.length > 0 && (
-            <p style={{ color: '#9ca3af', margin: '0 0 0.8rem', fontSize: '0.9rem' }}>
-              Quiz generated from your stack: {selectedTechStack.slice(0, 5).join(', ')}
-              {selectedTechStack.length > 5 ? ` +${selectedTechStack.length - 5}` : ''}
-            </p>
-          )}
           {quizDone ? (
             <div className="quiz-result">
               <div className="result-circle">
@@ -653,14 +672,19 @@ export default function Assessments({ theme = 'dark' }) {
         <div className="code-layout">
           {/* Problem panel */}
           <div className="code-problem">
-            <div className="prob-picker-row">
-              <select className="prob-select" value={problem.id} onChange={handleProblemChange}>
-                {PROBLEMS.map(p => <option key={p.id} value={p.id}>{p.title}</option>)}
-              </select>
-              <span className="prob-diff" style={{ color: DIFF_COLORS[problem.difficulty] }}>{problem.difficulty}</span>
-              <span className="prob-cat">{problem.category}</span>
+            <div className="prob-header-top">
+              <div className="prob-picker-row">
+                <select className="prob-select" value={problem.id} onChange={handleProblemChange}>
+                  {PROBLEMS.map(p => <option key={p.id} value={p.id}>{p.title}</option>)}
+                </select>
+                <span className="prob-diff" style={{ color: DIFF_COLORS[problem.difficulty] }}>{problem.difficulty}</span>
+                <span className="prob-cat">{problem.category}</span>
+              </div>
+              <h2 className="prob-title">
+                {solvedProblems.includes(problem.id) && <span style={{ color: '#22c55e', marginRight: '0.5rem' }}>✓</span>}
+                {problem.title}
+              </h2>
             </div>
-            <h2 className="prob-title">{problem.title}</h2>
             <p className="prob-desc">{problem.description}</p>
             <div className="prob-section">
               <h4>Examples</h4>
@@ -680,132 +704,201 @@ export default function Assessments({ theme = 'dark' }) {
             </div>
           </div>
 
-          {/* Editor panel */}
-          <div className="code-editor-panel">
-            <div className="editor-topbar">
-              <select className="lang-select" value={language.value} onChange={handleLanguageChange}>
-                {LANGUAGES.map(l => <option key={l.value} value={l.value}>{l.label}</option>)}
-              </select>
-              <div className="editor-btns">
+          {/* Editor panel container */}
+          <div className="code-right-pane">
+            <div className="code-editor-panel">
+              <div className="editor-header-brand">
+                <span className="brand-icon">&lt;/&gt;</span> <span className="brand-text">Code</span>
+              </div>
+              <div className="editor-topbar">
+                <select className="lang-select" value={language.value} onChange={handleLanguageChange}>
+                  {LANGUAGES.map(l => <option key={l.value} value={l.value}>{l.label}</option>)}
+                </select>
+                <div className="editor-btns">
+                  <button
+                    key="code-run-btn"
+                    type="button"
+                    className="btn-run code-action-run"
+                    onClick={handleRun}
+                    disabled={executingAction === 'run'}
+                  >
+                    <span className="icon" style={{marginRight:'6px'}}>▷</span> {executingAction === 'run' ? 'Running' : 'Run'}
+                  </button>
+                  <button
+                    key="code-submit-btn"
+                    type="button"
+                    className="btn-submit code-action-submit"
+                    onClick={handleSubmit}
+                    disabled={executingAction === 'submit'}
+                  >
+                    <span className="icon" style={{marginRight:'6px'}}>↗</span> {executingAction === 'submit' ? 'Submitting' : 'Submit'}
+                  </button>
+                </div>
+              </div>
+              
+              <div className="editor-inner-wrapper">
+                <Editor
+                  height="100%"
+                  language={language.monaco}
+                  theme={theme === 'light' ? 'light' : 'learnpath-dark'}
+                  value={code}
+                  onChange={(val) => setCode(val)}
+                  options={{ fontSize: 13, minimap: { enabled: false }, scrollBeyondLastLine: false, padding: { top: 12 }, contextmenu: false, renderLineHighlight: 'none' }}
+                />
+              </div>
+              
+              <div className="editor-statusbar">
                 <button
-                  key="code-run-btn"
                   type="button"
-                  className="btn-run"
-                  onClick={handleRun}
-                  disabled={!!executingAction}
+                  className="test-dropdown-trigger"
+                  onClick={() => setIsTestPanelOpen((prev) => !prev)}
                 >
-                  {executingAction === 'run' ? 'Running...' : 'Run'}
-                </button>
-                <button
-                  key="code-submit-btn"
-                  type="button"
-                  className="btn-submit"
-                  onClick={handleSubmit}
-                  disabled={!!executingAction}
-                >
-                  {executingAction === 'submit' ? 'Submitting...' : 'Submit'}
+                  <span className="trigger-tab active">
+                    <span className="tc-icon" style={{ color: '#22c55e', marginRight: '6px' }}>☑</span>
+                    Testcase
+                  </span>
+                  <span className="trigger-divider">|</span>
+                  <span className="trigger-tab">
+                    <span className="tc-icon" style={{ color: '#22c55e', marginRight: '6px' }}>&gt;_</span>
+                    Test Result
+                  </span>
+                  <span className={`trigger-caret ${isTestPanelOpen ? 'open' : ''}`}>▾</span>
                 </button>
               </div>
             </div>
-            <Editor
-              height="380px"
-              language={language.monaco}
-              theme={theme === 'light' ? 'light' : 'vs-dark'}
-              value={code}
-              onChange={(val) => setCode(val)}
-              options={{ fontSize: 14, minimap: { enabled: false }, scrollBeyondLastLine: false, padding: { top: 12 } }}
-            />
-            {(output || submitResult) && (
-              <div className="code-output">
-                {submitResult && submitResult.status === 'Accepted' ? (
-                  <div className="test-result accepted">
-                    <div className="result-header">
-                      <span className="result-status">✓ {submitResult.status}</span>
-                      <span className="result-runtime">Runtime: {submitResult.runtime}</span>
+
+            {/* Test Case / Output Panel */}
+            {shouldRenderTestPanel && (() => {
+              const resData = submitResult || output || {};
+              const isAccepted = resData.status === 'Accepted' || resData.type === 'run';
+              const isSubmit = resData.type === 'submit';
+              const isSuccessfulSubmit = isSubmit && isAccepted;
+              const statusLabel = isSuccessfulSubmit ? 'Submitted' : (isAccepted ? 'Accepted' : 'Failed');
+              const tcs = resData.testCases || [];
+              const passedCount = tcs.filter(tc => tc.passed).length;
+              const totalCount = tcs.length;
+              const hasPanelData = Boolean(
+                executingAction ||
+                resData?.error ||
+                resData?.status ||
+                resData?.runtime ||
+                (Array.isArray(tcs) && tcs.length > 0)
+              );
+
+              return (
+                <div className={`code-output console-panel code-output-dropup ${isTestPanelOpen ? 'open' : ''}`}>
+                  <div className="console-header-tabs">
+                    <div className="console-tab active">
+                      <span className="tc-icon" style={{color: '#22c55e', marginRight: '5px'}}>☑</span> Testcase
                     </div>
-                    
-                    <div className="test-case-badges">
-                      {submitResult.testCases && submitResult.testCases.map((tc) => (
-                        <div key={tc.num} className="test-case-badge passed">
-                          <span className="badge-checkmark">✓</span>
-                          <span className="badge-text">Case {tc.num}</span>
-                        </div>
-                      ))}
+                    <div className="console-tab">
+                      <span className="tc-icon" style={{color: '#6366f1', marginRight: '5px'}}>&gt;_</span> Test Result
                     </div>
-                    
-                    {submitResult.testCases && submitResult.testCases[0] && (
-                      <div className="test-case-detail">
-                        <div className="detail-section">
-                          <div className="detail-label">Input</div>
-                          <div className="detail-content">{submitResult.testCases[0].input}</div>
+                    <button 
+                      className="console-collapse-btn"
+                      onClick={() => setIsTestPanelOpen(false)}
+                      title="Collapse"
+                    >
+                      ▾
+                    </button>
+                  </div>
+
+                  <div className="custom-term-output">
+                  {!hasPanelData ? (
+                    <div className="tc-empty-state">
+                      <h3 className="tc-status-text" style={{ color: '#cbd5e1' }}>No test results yet</h3>
+                      <p style={{ color: '#94a3b8' }}>Click Run or Submit to open testcase details.</p>
+                    </div>
+                  ) : executingAction ? (
+                    <div className="tc-status-row">
+                      <h3 className="tc-status-text" style={{ color: '#60a5fa' }}>
+                        {executingAction === 'run' ? 'Running test cases...' : 'Submitting solution...'}
+                      </h3>
+                      <p style={{ color: '#94a3b8' }}>Please wait while we evaluate your code.</p>
+                    </div>
+                  ) : resData?.error ? (
+                    <div className="tc-status-row">
+                      <h3 className="tc-status-text" style={{ color: '#ef4444' }}>Compile Error</h3>
+                      <p style={{ color: '#f87171' }}>{resData.error}</p>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="tc-status-row">
+                        <div className="status-main">
+                          {isSuccessfulSubmit && (
+                            <span className="tc-solved-pill">
+                              <span className="tc-solved-icon">✓</span>
+                              Solved
+                            </span>
+                          )}
+                          <h3 className={`tc-status-text ${isAccepted ? 'accepted' : 'failed'}`}>{statusLabel}</h3>
+                          <span className="tc-runtime">Runtime: {resData.runtime || '0 ms'}</span>
                         </div>
-                        <div className="detail-section">
-                          <div className="detail-label">Output</div>
-                          <div className="detail-content">{submitResult.testCases[0].output}</div>
-                        </div>
-                      </div>
-                    )}
-                    
-                    {submitResult.status === 'Accepted' && (
-                      <div className="sr-stats">
-                        <span>Memory: <strong>{submitResult.memory}</strong></span>
-                        <span>Beats: <strong>{submitResult.beats}</strong> of submissions</span>
-                        {submitResult.saved !== undefined && (
-                          <span>{submitResult.saved ? 'Saved to your profile' : 'Sign in to save'}</span>
+                        {isSubmit && totalCount > 0 && (
+                          <div className="tc-passed-pill">
+                            {passedCount}/{totalCount} Passed test cases
+                          </div>
                         )}
                       </div>
-                    )}
 
-                    {renderCoachingPanel(submitResult.coaching)}
-                  </div>
-                ) : output && output.testCases ? (
-                  <div className="test-result run-result">
-                    <div className="result-header">
-                      <span className="result-status">✓ Passed</span>
-                      <span className="result-runtime">Runtime: {output.runtime}</span>
-                    </div>
-                    
-                    <div className="test-case-badges">
-                      {output.testCases.map((tc) => (
-                        <div key={tc.num} className="test-case-badge passed">
-                          <span className="badge-checkmark">✓</span>
-                          <span className="badge-text">Case {tc.num}</span>
+                      {totalCount > 0 && (
+                        <div className="tc-cases-row">
+                          {tcs.map((tc, idx) => (
+                            <button 
+                              key={idx} 
+                              className={`tc-case-btn ${activeTestCase === idx ? 'active' : ''}`}
+                              onClick={() => setActiveTestCase(idx)}
+                            >
+                              <span className="tc-case-icon" style={{ color: tc.passed ? '#22c55e' : '#ef4444' }}>
+                                {tc.passed ? '☑' : '☒'}
+                              </span>
+                              Case {tc.num}
+                            </button>
+                          ))}
                         </div>
-                      ))}
-                    </div>
-                    
-                    {output.testCases[0] && (
-                      <div className="test-case-detail">
-                        <div className="detail-section">
-                          <div className="detail-label">Input</div>
-                          <div className="detail-content">{output.testCases[0].input}</div>
+                      )}
+
+                      {totalCount > 0 && tcs[activeTestCase] && (
+                        <div className="tc-detail-box">
+                          <div className="tc-detail-section">
+                            <span className="tc-detail-label">Input</span>
+                            <div className="tc-detail-val">
+                               <div className="tc-var-label">nums =</div>
+                               <div className="tc-val-text">{tcs[activeTestCase].input}</div>
+                            </div>
+                          </div>
+                          
+                          <div className="tc-detail-section">
+                            <span className="tc-detail-label">Output</span>
+                            <div className="tc-detail-val">
+                               <div className="tc-val-text">{tcs[activeTestCase].output}</div>
+                            </div>
+                          </div>
                         </div>
-                        <div className="detail-section">
-                          <div className="detail-label">Output</div>
-                          <div className="detail-content">{output.testCases[0].output}</div>
+                      )}
+
+                      {isSubmit && isAccepted && (
+                        <div className="sr-stats">
+                          <span>Runtime: <strong style={{color: 'white'}}>{resData.runtime}</strong></span>
+                          <span>Memory: <strong style={{color: 'white'}}>{resData.memory}</strong></span>
+                          <span>Beats: <strong style={{color: 'white'}}>{resData.beats}</strong></span>
+                          {resData.saved !== undefined && (
+                            <span style={{color: '#22c55e'}}>{resData.saved ? 'Saved to profile' : ''}</span>
+                          )}
                         </div>
-                      </div>
-                    )}
+                      )}
+
+                      {isSubmit && isAccepted && renderCoachingPanel(resData.coaching)}
+                    </>
+                  )}
                   </div>
-                ) : submitResult ? (
-                  <div className={`submit-result ${submitResult.status === 'Accepted' ? 'accepted' : 'error'}`}>
-                    <span className="sr-status">{submitResult.status === 'Accepted' ? '\u2713' : '\u2717'} {submitResult.status}</span>
-                    <p style={{ color: '#f87171', margin: '0.4rem 0 0', fontSize: '0.9rem' }}>{submitResult.error}</p>
-                  </div>
-                ) : (
-                  <pre className="output-pre">{JSON.stringify(output, null, 2)}</pre>
-                )}
-              </div>
-            )}
+                </div>
+              );
+            })()}
           </div>
         </div>
       )}
 
-      <div style={{ marginTop: '3rem', marginBottom: '4rem', display: 'flex', justifyContent: 'center' }}>
-        <button className="btn-secondary" onClick={() => navigate('/ai-assistant')}>
-          Analyze Your Skillset Level
-        </button>
-      </div>
     </div>
   );
 }

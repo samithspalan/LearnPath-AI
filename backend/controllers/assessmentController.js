@@ -361,7 +361,7 @@ export const submitCode = async (req, res) => {
       return res.status(400).json({ error: 'code, language, and problemTitle are required' });
     }
 
-    await Submission.create({
+    const submission = await Submission.create({
       userId,
       submissionType: 'coding',
       code,
@@ -419,7 +419,7 @@ export const submitQuiz = async (req, res) => {
       return res.status(400).json({ error: 'score and totalQuestions are required' });
     }
 
-    await Submission.create({
+    const submission = await Submission.create({
       userId,
       submissionType: 'quiz',
       answers,
@@ -496,40 +496,56 @@ export const getDashboard = async (req, res) => {
       return `${months[dt.getMonth()]} ${dt.getDate()}`;
     };
 
-    // --- 1. Main chart: daily score (cumulative solved count per day) ---
-    const dailyScoreMap = {};
-    let cumulativeScore = 0;
-    for (const sub of submissions) {
-      const key = fmtDate(sub.createdAt);
-      cumulativeScore += (sub.score || 1);
-      dailyScoreMap[key] = cumulativeScore;
+    // --- Generate Last 7 Days Window ---
+    const days = [];
+    const now = new Date();
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(now);
+      d.setDate(now.getDate() - i);
+      days.push({
+        key: d.toDateString(),
+        label: d.toLocaleDateString('en-US', { weekday: 'short' }),
+        fullDate: fmtDate(d)
+      });
     }
-    const mainChartData = Object.entries(dailyScoreMap).map(([date, score]) => ({ date, score }));
 
-    // --- 2. Daily coding questions solved ---
-    const codingMap = {};
-    for (const sub of submissions) {
-      if (sub.submissionType === 'coding') {
-        const key = fmtDate(sub.createdAt);
-        codingMap[key] = (codingMap[key] || 0) + 1;
-      }
-    }
-    const codingQuestionsData = Object.entries(codingMap).map(([day, solved]) => ({ day, solved }));
+    // --- 1. Main chart: daily score (cumulative window) ---
+    // Calculate cumulative score at the start of our 7-day window
+    const windowStart = new Date(days[0].key);
+    let runningCumulative = submissions
+      .filter(s => new Date(s.createdAt) < windowStart)
+      .reduce((sum, s) => sum + (s.score || 1), 0);
 
-    // --- 3. Daily MCQ / quiz questions solved ---
-    const mcqMap = {};
-    for (const sub of submissions) {
-      if (sub.submissionType === 'quiz' || sub.assessmentId) {
-        const key = fmtDate(sub.createdAt);
-        mcqMap[key] = (mcqMap[key] || 0) + 1;
-      }
-    }
-    const mcqData = Object.entries(mcqMap).map(([day, solved]) => ({ day, solved }));
+    const mainChartData = days.map(d => {
+      const dayScore = submissions
+        .filter(s => new Date(s.createdAt).toDateString() === d.key)
+        .reduce((sum, s) => sum + (s.score || 1), 0);
+      runningCumulative += dayScore;
+      return { date: d.label, score: runningCumulative };
+    });
+
+    // --- 2. Daily coding questions solved (last 7 days) ---
+    const codingQuestionsData = days.map(d => ({
+      day: d.label,
+      solved: submissions.filter(s => 
+        s.submissionType === 'coding' && 
+        new Date(s.createdAt).toDateString() === d.key
+      ).length
+    }));
+
+    // --- 3. Daily MCQ / quiz questions solved (last 7 days) ---
+    const mcqData = days.map(d => ({
+      day: d.label,
+      solved: submissions.filter(s => 
+        (s.submissionType === 'quiz' || s.assessmentId) && 
+        new Date(s.createdAt).toDateString() === d.key
+      ).length
+    }));
 
     // --- 4. Recent quiz scores ---
     const quizSubs = submissions.filter(s => s.submissionType === 'quiz' || s.assessmentId);
     const quizData = quizSubs.slice(-7).map((s, i) => ({
-      name: `Quiz ${i + 1}`,
+      name: s.problemTitle || `Quiz ${i + 1}`,
       score: s.score || 0,
     }));
 
@@ -537,10 +553,10 @@ export const getDashboard = async (req, res) => {
     const totalSolved = progress?.totalSolved || submissions.length;
     const dailyStreak = progress?.dailyStreak || 0;
     const totalCoding = submissions.filter(s => s.submissionType === 'coding').length;
-    const totalQuiz = submissions.filter(s => s.submissionType === 'quiz' || s.assessmentId).length;
+    const totalQuiz = quizSubs.length;
 
     res.json({
-      mainChartData,
+      mainChartData: mainChartData.map(d => ({ ...d, fullDate: days.find(day => day.label === d.date)?.fullDate })),
       codingQuestionsData,
       mcqData,
       quizData,
@@ -591,11 +607,9 @@ export const getAiAnalysis = async (req, res) => {
   try {
     const userId = req.auth.userId;
 
-    const latestCodeSubmissionDoc = await Submission.findOne({ userId, submissionType: "coding" }).sort({ createdAt: -1 });
-    const latestSubmissionDoc = latestCodeSubmissionDoc || await Submission.findOne({ userId }).sort({ createdAt: -1 });
-    const submissionCount = latestCodeSubmissionDoc
-      ? await Submission.countDocuments({ userId, submissionType: "coding" })
-      : await Submission.countDocuments({ userId });
+    // Get absolute latest submission (coding or quiz)
+    const latestSubmissionDoc = await Submission.findOne({ userId }).sort({ createdAt: -1 });
+    const submissionCount = await Submission.countDocuments({ userId });
     const progress = await Progress.findOne({ userId });
     const profile = await UserProfile.findOne({ userId });
 
@@ -652,8 +666,9 @@ export const getAiAnalysis = async (req, res) => {
 
     // Check if we already have cached coaching for this latest submission
     let coaching = latestSubmissionDoc.aiCoaching;
+    const forceRefresh = req.query.refresh === 'true';
     
-    if (!coaching) {
+    if (!coaching || forceRefresh) {
       const coachingResult = await agentOrchestrator.generateSubmissionCoaching(safeProfile, {
         ...coachingPayload,
         progress: buildProgressSnapshot(progress),
@@ -677,9 +692,10 @@ export const getAiAnalysis = async (req, res) => {
 
     res.json({
       summary: coaching.summary || buildDynamicSummary(latest, focusedWeakAreas),
+      level: coaching.level || (latest.submissionType === 'coding' ? 'Technical Solve' : 'Concept Check'),
       currentSubmission: {
         submissionType: latest.submissionType || (latest.code ? "coding" : "quiz"),
-        problemTitle: latest.problemTitle || "Quiz Attempt",
+        problemTitle: latest.problemTitle || (latest.submissionType === 'quiz' ? "Recent Quiz" : "Technical Task"),
         language: latest.language || null,
         score: latest.score ?? null,
         totalQuestions: latest.totalQuestions ?? null,

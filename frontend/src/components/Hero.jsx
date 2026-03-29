@@ -1,7 +1,12 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { SignedIn, SignedOut, SignInButton } from '@clerk/clerk-react';
+import StrokeLogoLoader from './StrokeLogoLoader';
 import './Hero.css';
 
 const Hero = () => {
+  const navigate = useNavigate();
+
   return (
     <section className="hero">
       <div className="hero-content">
@@ -16,24 +21,35 @@ const Hero = () => {
         </p>
         
         <div className="hero-actions">
-          <button className="btn-primary">Start Assessment</button>
-          <button className="btn-secondary">View Demo</button>
+          <SignedOut>
+            <SignInButton mode="modal" fallbackRedirectUrl="/learning-plans" forceRedirectUrl="/learning-plans" signUpFallbackRedirectUrl="/learning-plans">
+              <button className="btn-primary">Start Your Journey</button>
+            </SignInButton>
+          </SignedOut>
+          <SignedIn>
+            <button className="btn-primary" onClick={() => navigate('/progress')}>
+              Explore Features
+            </button>
+          </SignedIn>
         </div>
 
-        <div className="trusted-by">
-          <div className="avatars">
-            <div className="avatar"></div>
-            <div className="avatar"></div>
-            <div className="avatar"></div>
-          </div>
-          <span>Trusted by 10,000+ top-tier professionals</span>
-        </div>
       </div>
 
       <div className="hero-visual">
         <div className="visual-card">
           <div className="brain-loader">
-             <img src="/logo.png" alt="LearnPath AI" className="hero-logo-img" />
+             <div className="hero-logo-img" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+               <StrokeLogoLoader size={90} gradient={true} />
+             </div>
+             <svg className="loader-ring" viewBox="0 0 100 100">
+               <defs>
+                 <linearGradient id="ring-grad" x1="0" y1="0" x2="100" y2="100">
+                   <stop offset="0%" stopColor="#7c3aed" />
+                   <stop offset="100%" stopColor="#06b6d4" />
+                 </linearGradient>
+               </defs>
+               <circle cx="50" cy="50" r="48" stroke="url(#ring-grad)" />
+             </svg>
           </div>
           <div className="processing-text">NEURAL_PROCESSING_ACTIVE</div>
           <div className="loading-bar">
