@@ -5,19 +5,28 @@ import './StrokeLogoLoader.css'
  * Renders logo.svg paths as strokes-only with a sequential dashoffset reveal animation.
  * No fills, no black background — works on cream or dark paper.
  */
-export default function StrokeLogoLoader({ size = 120, label = '' }) {
+export default function StrokeLogoLoader({ size = 120, label = '', fade, gradient = false }) {
   return (
-    <div className="sll-wrap">
+    <div className={`sll-wrap ${fade ? 'fade-' + fade : ''}`}>
       <div className="sll-svg-box" style={{ width: size, height: size }}>
         {/* All paths from logo.svg, unified 225×178 viewBox, stroke-only */}
         <svg
           viewBox="0 0 225 178"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className="sll-svg"
+          className={`sll-svg ${gradient ? 'sll-gradient' : ''}`}
           aria-label="LearnPath AI logo loading"
           role="img"
         >
+          {gradient && (
+            <defs>
+              <linearGradient id="sll-grad" x1="0" y1="0" x2="225" y2="178" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stopColor="#ec4899" />
+                <stop offset="45%" stopColor="#7c3aed" />
+                <stop offset="100%" stopColor="#06b6d4" />
+              </linearGradient>
+            </defs>
+          )}
           {/* p1 — curve4 / bottom-left block */}
           <path className="sll-path sll-p1" d="M17.5706 112.498C21.1343 112.528 24.7754 112.635 26.72 112.716C27.1056 114.695 27.4577 116.376 27.763 117.817C28.1088 119.45 28.3883 120.757 28.5863 121.851C28.9871 124.064 29.0055 125.197 28.6663 126.13C28.3185 127.087 27.5456 127.984 25.8861 129.576C24.2682 131.129 21.9104 133.259 18.6956 136.596C15.7966 139.555 12.9923 142.46 9.99641 145.238C7.46256 141.175 5.68095 135.622 4.3636 129.782C3.04464 123.935 2.21236 117.905 1.52864 112.966L8.28059 112.836L8.40071 112.834L8.51692 112.803C8.9685 112.683 10.1403 112.588 11.8402 112.537C13.4888 112.487 15.5121 112.481 17.5706 112.498Z" />
 
