@@ -45,6 +45,11 @@ body.theme-dark .sll-path {
   stroke: oklch(90% 0.005 80);
 }
 
+/* Gradient mode overriding theme stroke */
+.sll-gradient .sll-path {
+  stroke: url(#sll-grad) !important;
+}
+
 /* ── Staggered delays for each path ── */
 .sll-p1  { animation-delay: 0.0s; }
 .sll-p2  { animation-delay: 0.02s; }

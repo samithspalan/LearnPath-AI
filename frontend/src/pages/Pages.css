@@ -1,77 +1,105 @@
 .page-container {
-  padding: 2rem 4rem;
-  min-height: 80vh;
-  color: white;
-  animation: fadeIn 0.5s ease-in-out;
+  padding: clamp(1rem, 2.2vw, 1.6rem);
+  min-height: 76vh;
+  color: var(--lp-text);
+  position: relative;
+  z-index: 1;
+  animation: pageFade 300ms ease;
+  max-width: 1260px;
+  margin: 0 auto;
 }
 
 .page-title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-bottom: 1.5rem;
-  background: linear-gradient(135deg, #fff 0%, #a1a1aa 100%);
+  margin: 0 0 1rem;
+  font-size: clamp(1.6rem, 4vw, 2.45rem);
+  line-height: 1.15;
+  background: linear-gradient(90deg, #fff, #d1d5db);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .page-content {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 2rem;
-  color: #a1a1aa;
+  border: 1px solid var(--lp-border);
+  border-radius: var(--lp-radius);
+  padding: clamp(0.95rem, 2vw, 1.25rem);
+  background: var(--lp-surface);
+  color: var(--lp-text);
+  box-shadow: var(--lp-shadow);
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+.btn-primary,
+.btn-secondary,
+.btn-send {
+  appearance: none;
+  border-radius: 10px;
+  border: none;
+  padding: 0.62rem 1rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: transform 140ms ease, opacity 140ms ease;
 }
 
 .btn-primary {
-  background-color: white;
-  color: black;
-  border: none;
-  padding: 0.75rem 1.75rem;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: opacity 0.2s;
-}
-
-.btn-primary:hover {
-  opacity: 0.85;
-}
-
-.btn-send {
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: opacity 0.2s;
-}
-
-.btn-send:hover {
-  opacity: 0.85;
+  color: #fff;
+  background: linear-gradient(90deg, var(--lp-accent), var(--lp-accent-2));
 }
 
 .btn-secondary {
-  background: transparent;
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 0.75rem 1.75rem;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: background 0.2s, border-color 0.2s;
+  color: var(--lp-text);
+  border: 1px solid var(--lp-border);
+  background: color-mix(in srgb, var(--lp-surface) 74%, transparent);
 }
 
-.btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.4);
+.btn-send {
+  color: #fff;
+  background: linear-gradient(90deg, #0ea5e9, #8b5cf6);
+}
+
+.btn-primary:hover,
+.btn-secondary:hover,
+.btn-send:hover {
+  transform: translateY(-1px);
+  opacity: 0.95;
+}
+
+.theme-light .page-container {
+  color: var(--lp-text);
+}
+
+.theme-light .page-title {
+  background: linear-gradient(90deg, #0f172a, #334155);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.theme-light .page-content {
+  background: var(--lp-surface);
+  color: var(--lp-text);
+  border-color: var(--lp-border);
+}
+
+.theme-light .btn-secondary {
+  color: var(--lp-text);
+  border-color: var(--lp-border);
+  background: color-mix(in srgb, var(--lp-surface) 82%, transparent);
+}
+
+@keyframes pageFade {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (min-width: 980px) {
+  .page-container {
+    padding: 1.4rem 1.5rem 2.2rem;
+  }
 }

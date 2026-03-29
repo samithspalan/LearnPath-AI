@@ -280,6 +280,69 @@
   gap: 1.2rem;
 }
 
+/* Unified spacing + theme overrides */
+.lp-form-wrapper,
+.lp-result {
+  max-width: 980px;
+}
+
+.lp-card,
+.lp-result-header,
+.lp-phase {
+  background: var(--lp-surface);
+  border: 1px solid var(--lp-border);
+  border-radius: var(--lp-radius);
+  box-shadow: var(--lp-shadow);
+}
+
+.lp-card {
+  padding: clamp(1rem, 2.3vw, 1.55rem);
+}
+
+.lp-card-title,
+.lp-goal-label,
+.lp-phase-title {
+  color: var(--lp-heading);
+}
+
+.lp-sub,
+.lp-field label,
+.lp-goal-desc,
+.lp-step,
+.lp-back {
+  color: var(--lp-muted);
+}
+
+.lp-input,
+.lp-radio,
+.lp-tag,
+.lp-goal,
+.lp-step-num {
+  border-color: var(--lp-border);
+  background: color-mix(in srgb, var(--lp-surface-strong) 86%, transparent);
+  color: var(--lp-text);
+}
+
+.lp-chip {
+  background: color-mix(in srgb, var(--lp-accent-2) 16%, transparent);
+  border-color: color-mix(in srgb, var(--lp-accent-2) 40%, transparent);
+  color: var(--lp-text);
+}
+
+.lp-row {
+  gap: 0.75rem;
+}
+
+@media (max-width: 900px) {
+  .lp-goals {
+    grid-template-columns: 1fr;
+  }
+
+  .lp-row {
+    flex-wrap: wrap;
+  }
+}
+
 .lp-phase {
   display: flex;
   gap: 1rem;

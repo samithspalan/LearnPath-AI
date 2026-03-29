@@ -1,4 +1,5 @@
 import React from 'react';
+import StrokeLogoLoader from './StrokeLogoLoader';
 import './Hero.css';
 
 const Hero = () => {
@@ -20,20 +21,23 @@ const Hero = () => {
           <button className="btn-secondary">View Demo</button>
         </div>
 
-        <div className="trusted-by">
-          <div className="avatars">
-            <div className="avatar"></div>
-            <div className="avatar"></div>
-            <div className="avatar"></div>
-          </div>
-          <span>Trusted by 10,000+ top-tier professionals</span>
-        </div>
       </div>
 
       <div className="hero-visual">
         <div className="visual-card">
           <div className="brain-loader">
-             <img src="/logo.png" alt="LearnPath AI" className="hero-logo-img" />
+             <div className="hero-logo-img" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+               <StrokeLogoLoader size={90} gradient={true} />
+             </div>
+             <svg className="loader-ring" viewBox="0 0 100 100">
+               <defs>
+                 <linearGradient id="ring-grad" x1="0" y1="0" x2="100" y2="100">
+                   <stop offset="0%" stopColor="#7c3aed" />
+                   <stop offset="100%" stopColor="#06b6d4" />
+                 </linearGradient>
+               </defs>
+               <circle cx="50" cy="50" r="48" stroke="url(#ring-grad)" />
+             </svg>
           </div>
           <div className="processing-text">NEURAL_PROCESSING_ACTIVE</div>
           <div className="loading-bar">

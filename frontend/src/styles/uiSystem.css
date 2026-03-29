@@ -1,361 +1,262 @@
 /* ══════════════════════════════════════════════
-   UI SYSTEM — EDITORIAL BRUTALIST OVERRIDES
-   Complete reset of all component styles
+   UI SYSTEM — GLOBAL COMPONENT OVERRIDES v2
    ══════════════════════════════════════════════ */
 
-/* ── App Shell ── */
-body, #root, .app-container {
-  background: var(--paper) !important;
-  color: var(--ink-soft) !important;
+/* ── Core Design Tokens (override layer) ── */
+:root {
+  --ui-bg:            #04050d;
+  --ui-surface:       rgba(11, 14, 28, 0.88);
+  --ui-surface-soft:  rgba(18, 22, 44, 0.85);
+  --ui-surface-solid: #0d1020;
+  --ui-border:        rgba(255, 255, 255, 0.07);
+  --ui-border-active: rgba(124, 58, 237, 0.45);
+  --ui-text:          #cbd5e1;
+  --ui-muted:         #64748b;
+  --ui-heading:       #f1f5f9;
+  --ui-primary:       #7c3aed;
+  --ui-accent:        #06b6d4;
+  --ui-pink:          #ec4899;
+  --ui-green:         #10b981;
+  --ui-shadow:        0 8px 40px rgba(0, 0, 0, 0.5);
+  --ui-radius:        16px;
+
+  /* Spacing */
+  --ui-space-1: 4px;
+  --ui-space-2: 8px;
+  --ui-space-3: 12px;
+  --ui-space-4: 16px;
+  --ui-space-5: 24px;
+  --ui-space-6: 32px;
+  --ui-space-7: 48px;
 }
 
-/* ══════════════════════════════════════════════
-   NAVBAR
-   ══════════════════════════════════════════════ */
-.navbar {
-  position: sticky !important;
-  top: 0 !important;
-  z-index: 1100 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  gap: 1rem !important;
-  height: 60px !important;
-  padding: 0 2rem !important;
-  margin: 0 !important;
-  max-width: 100% !important;
-  border-radius: 0 !important;
-  border: none !important;
-  border-bottom: 1px solid var(--border) !important;
-  background: var(--paper) !important;
-  backdrop-filter: none !important;
-  box-shadow: none !important;
+body.theme-light {
+  --ui-bg:            #f8f9ff;
+  --ui-surface:       rgba(255, 255, 255, 0.92);
+  --ui-surface-soft:  rgba(238, 240, 252, 0.9);
+  --ui-surface-solid: #ffffff;
+  --ui-border:        rgba(30, 20, 80, 0.09);
+  --ui-border-active: rgba(124, 58, 237, 0.35);
+  --ui-text:          #334155;
+  --ui-muted:         #64748b;
+  --ui-heading:       #0f0a2e;
+  --ui-primary:       #6d28d9;
+  --ui-accent:        #0891b2;
+  --ui-shadow:        0 8px 30px rgba(15, 10, 46, 0.08);
 }
 
-body.theme-dark .navbar {
-  background: var(--paper) !important;
-  border-bottom-color: var(--border) !important;
+/* ── Global App Container ── */
+body,
+.app-container {
+  background: var(--ui-bg) !important;
+  color: var(--ui-text);
 }
 
-.navbar-logo {
-  display: flex !important;
-  align-items: center !important;
-  gap: 0.6rem !important;
-  font-family: var(--font-display) !important;
-  font-size: 1.1rem !important;
-  font-weight: 400 !important;
-  letter-spacing: -0.02em !important;
-  color: var(--ink) !important;
-  text-decoration: none !important;
+/* ── Surfaces & Cards ── */
+.navbar,
+.site-footer {
+  background: var(--ui-surface) !important;
+  border: 1px solid var(--ui-border) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
 }
 
-.logo-icon {
-  width: 26px !important;
-  height: 26px !important;
-  object-fit: contain !important;
-  filter: none !important;
+.lp-card,
+.quiz-card,
+.code-problem,
+.code-editor-panel,
+.main-chart-card,
+.profile-widget,
+.bottom-card,
+.ai-action-bar,
+.ai-metric-card,
+.ai-panel,
+.highlight-card,
+.about-card,
+.about-hero,
+.about-mission,
+.visual-card-main {
+  background: var(--ui-surface) !important;
+  border: 1px solid var(--ui-border) !important;
+  border-radius: 20px !important;
+  box-shadow: var(--ui-shadow) !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
 }
 
-.navbar-links {
-  display: flex !important;
-  align-items: center !important;
-  gap: 0 !important;
-  background: transparent !important;
-  border: none !important;
-  padding: 0 !important;
-  border-radius: 0 !important;
+.lp-card:hover,
+.highlight-card:hover,
+.ai-panel:hover,
+.about-card:hover {
+  border-color: var(--ui-border-active) !important;
+  box-shadow: var(--ui-shadow), 0 0 0 1px var(--ui-border-active) !important;
 }
 
+/* ── Page Containers ── */
+.page-container,
+.progress-dashboard,
+.ai-page {
+  max-width: 1280px !important;
+  margin: 0 auto !important;
+  padding: var(--ui-space-5) var(--ui-space-4) var(--ui-space-7) !important;
+}
+
+/* ── Typography ── */
+.page-title,
+h1, h2, h3, h4,
+.lp-card-title,
+.quiz-question,
+.prob-title,
+.title-group h2,
+.ai-title,
+.about-card h3,
+.landing-copy h1,
+.landing-band h2 {
+  color: var(--ui-heading) !important;
+}
+
+p, .lp-sub, .prob-desc, .prob-exp-text,
+.prob-constraints, .title-group p, .footer-copy,
+.about-summary, .ai-desc, .ai-subtitle {
+  color: var(--ui-muted);
+}
+
+/* ── Nav Links ── */
 .nav-link {
-  font-family: var(--font-body) !important;
-  font-size: 0.8rem !important;
-  font-weight: 500 !important;
-  letter-spacing: 0.08em !important;
-  text-transform: uppercase !important;
-  color: var(--ink-muted) !important;
-  padding: 0.4rem 0.85rem !important;
-  border-radius: 0 !important;
-  text-decoration: none !important;
-  transition: color 0.15s ease !important;
-  border-bottom: 2px solid transparent !important;
-  white-space: nowrap !important;
-  background: none !important;
-  box-shadow: none !important;
+  color: var(--ui-muted) !important;
+  transition: all 0.25s ease !important;
 }
 
 .nav-link:hover {
-  color: var(--ink) !important;
-  background: transparent !important;
-  border-bottom-color: var(--border) !important;
-  box-shadow: none !important;
+  color: var(--ui-heading) !important;
+  background: rgba(124, 58, 237, 0.12) !important;
 }
 
 .nav-link.active {
-  color: var(--ink) !important;
-  background: transparent !important;
-  border-bottom: 2px solid var(--amber) !important;
-  box-shadow: none !important;
+  color: #fff !important;
+  background: linear-gradient(135deg, var(--ui-primary), var(--ui-accent)) !important;
+  box-shadow: 0 0 16px rgba(124, 58, 237, 0.4) !important;
 }
 
-.nav-dot { display: none !important; }
-
-.navbar-actions {
-  display: flex !important;
-  align-items: center !important;
-  gap: 0.6rem !important;
-}
-
-.theme-toggle {
-  width: 34px !important;
-  height: 34px !important;
-  border-radius: 50% !important;
-  border: 1px solid var(--border) !important;
-  background: transparent !important;
-  color: var(--ink-muted) !important;
-  cursor: pointer !important;
-  display: grid !important;
-  place-items: center !important;
-  transition: all 0.15s ease !important;
-}
-
-.theme-toggle:hover {
-  border-color: var(--ink-muted) !important;
-  color: var(--ink) !important;
-  background: transparent !important;
-  transform: none !important;
-}
-
-.btn-signin {
-  border: 1px solid var(--ink) !important;
-  border-radius: var(--radius-sm) !important;
-  padding: 0.42rem 1rem !important;
-  font-weight: 500 !important;
-  font-size: 0.78rem !important;
-  letter-spacing: 0.06em !important;
-  text-transform: uppercase !important;
-  color: var(--paper) !important;
-  background: var(--ink) !important;
-  cursor: pointer !important;
-  transition: all 0.15s ease !important;
-  box-shadow: none !important;
-}
-
-.btn-signin:hover {
-  background: var(--amber-dark) !important;
-  border-color: var(--amber-dark) !important;
-  transform: none !important;
-  box-shadow: none !important;
-}
-
-/* ══════════════════════════════════════════════
-   SITE FOOTER
-   ══════════════════════════════════════════════ */
-.site-footer {
-  border-radius: 0 !important;
+/* ── Buttons ── */
+.btn-primary,
+.btn-signin,
+.btn-send,
+.btn-submit {
+  background: linear-gradient(135deg, var(--ui-primary) 0%, var(--ui-accent) 100%) !important;
+  color: #fff !important;
   border: none !important;
-  border-top: 1px solid var(--border) !important;
-  margin: 0 !important;
-  background: var(--paper-soft) !important;
-  backdrop-filter: none !important;
+  box-shadow: 0 4px 20px rgba(124, 58, 237, 0.35) !important;
+  transition: all 0.25s ease !important;
 }
 
-/* ══════════════════════════════════════════════
-   BUTTONS
-   ══════════════════════════════════════════════ */
-.btn-primary, .btn-send, .btn-submit {
-  background: var(--ink) !important;
-  color: var(--paper) !important;
-  border: 1px solid var(--ink) !important;
-  border-radius: var(--radius-sm) !important;
-  box-shadow: none !important;
-  font-weight: 500 !important;
-  letter-spacing: 0.04em !important;
-  transition: all 0.15s ease !important;
+.btn-primary:hover,
+.btn-signin:hover,
+.btn-send:hover,
+.btn-submit:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 28px rgba(124, 58, 237, 0.5) !important;
 }
 
-.btn-primary:hover, .btn-send:hover, .btn-submit:hover {
-  background: var(--amber-dark) !important;
-  border-color: var(--amber-dark) !important;
-  transform: none !important;
-  box-shadow: none !important;
-}
-
-.btn-secondary, .btn-run {
-  background: transparent !important;
-  color: var(--ink) !important;
-  border: 1px solid var(--border-ink) !important;
-  border-radius: var(--radius-sm) !important;
-  box-shadow: none !important;
-  font-weight: 500 !important;
-  transition: all 0.15s ease !important;
-}
-
-.btn-secondary:hover, .btn-run:hover:not(:disabled) {
-  background: var(--paper-soft) !important;
-  border-color: var(--ink) !important;
-  box-shadow: none !important;
-}
-
-/* ══════════════════════════════════════════════
-   SURFACES & CARDS
-   ══════════════════════════════════════════════ */
-.lp-card, .quiz-card, .code-problem, .code-editor-panel,
-.main-chart-card, .profile-widget, .bottom-card,
-.ai-action-bar, .ai-metric-card, .ai-panel,
-.highlight-card, .about-card, .about-hero, .about-mission,
-.visual-card-main, .page-content, .lp-result-header, .lp-phase {
-  background: var(--paper) !important;
-  border: 1px solid var(--border) !important;
-  border-radius: var(--radius) !important;
-  box-shadow: none !important;
-  color: var(--ink-soft) !important;
-}
-
-body.theme-dark .lp-card, body.theme-dark .quiz-card,
-body.theme-dark .code-problem, body.theme-dark .code-editor-panel,
-body.theme-dark .highlight-card, body.theme-dark .about-card,
-body.theme-dark .page-content, body.theme-dark .ai-panel,
-body.theme-dark .ai-metric-card {
-  background: var(--paper-soft) !important;
-  border-color: var(--border) !important;
-}
-
-.lp-card:hover, .highlight-card:hover,
-.ai-panel:hover, .about-card:hover, .lp-phase:hover {
-  border-color: var(--amber-dark) !important;
-  box-shadow: var(--shadow-float) !important;
-  transition: all 0.2s ease !important;
-}
-
-/* ══════════════════════════════════════════════
-   TYPOGRAPHY
-   ══════════════════════════════════════════════ */
-h1, h2, h3, h4, h5, h6,
-.page-title, .lp-card-title, .quiz-question,
-.prob-title, .ai-title, .about-card h3, .landing-copy h1 {
-  color: var(--ink) !important;
-  font-family: var(--font-display) !important;
-}
-
-p, li, .lp-sub, .prob-desc, .prob-exp-text,
-.prob-constraints, .ai-desc, .ai-subtitle,
-.about-summary, .about-card p, .footer-copy,
-.highlight-card p {
-  color: var(--ink-muted) !important;
-}
-
-/* ══════════════════════════════════════════════
-   PAGE CONTAINERS
-   ══════════════════════════════════════════════ */
-.page-container, .progress-dashboard, .ai-page {
-  max-width: 1200px !important;
-  margin: 0 auto !important;
-  padding: 2rem 2rem 4rem !important;
-  color: var(--ink-soft) !important;
-}
-
-/* ══════════════════════════════════════════════
-   FORM CONTROLS
-   ══════════════════════════════════════════════ */
-.quiz-option, .lp-tag, .lp-radio, .lp-goal,
-.lp-input, .lang-select, .prob-select,
-.mini-stat-box, .sidebar-stat-box {
-  background: var(--paper-soft) !important;
-  border: 1px solid var(--border) !important;
-  color: var(--ink) !important;
-  border-radius: var(--radius-sm) !important;
-  transition: all 0.15s ease !important;
-}
-
-.quiz-option:hover:not(:disabled) {
-  border-color: var(--ink) !important;
-  background: var(--amber-pale) !important;
-}
-
-.quiz-option.selected, .lp-tag.selected,
-.lp-radio.selected, .lp-goal.selected {
-  background: var(--amber-pale) !important;
-  border-color: var(--amber-dark) !important;
-  color: var(--ink) !important;
-}
-
-/* ══════════════════════════════════════════════
-   ASSESS TABS
-   ══════════════════════════════════════════════ */
+.btn-secondary,
+.btn-run,
+.theme-toggle,
+.lp-tag,
+.lp-radio,
+.lp-goal,
+.lp-input,
+.quiz-option,
+.lang-select,
+.prob-select,
+.mini-stat-box,
+.sidebar-stat-box,
 .assess-tabs {
-  background: var(--paper-soft) !important;
-  border: 1px solid var(--border) !important;
-  border-radius: var(--radius-sm) !important;
-  padding: 3px !important;
-  gap: 2px !important;
+  background: var(--ui-surface-soft) !important;
+  border: 1px solid var(--ui-border) !important;
+  color: var(--ui-text) !important;
+  transition: all 0.25s ease !important;
 }
 
-.assess-tab {
-  color: var(--ink-muted) !important;
-  font-size: 0.78rem !important;
-  font-weight: 500 !important;
-  letter-spacing: 0.06em !important;
-  text-transform: uppercase !important;
-  border: none !important;
-  border-radius: 4px !important;
-  background: transparent !important;
-  transition: all 0.15s ease !important;
+.btn-secondary:hover,
+.quiz-option:hover,
+.lp-tag:hover,
+.lp-goal:hover {
+  border-color: var(--ui-border-active) !important;
+  background: rgba(124, 58, 237, 0.1) !important;
 }
 
-.assess-tab:hover { color: var(--ink) !important; background: var(--paper) !important; }
-
+/* ── Selected States ── */
+.quiz-option.selected,
+.lp-tag.selected,
+.lp-radio.selected,
+.lp-goal.selected,
 .assess-tab.active {
-  background: var(--ink) !important;
-  color: var(--paper) !important;
-  box-shadow: none !important;
+  background: rgba(124, 58, 237, 0.18) !important;
+  border-color: rgba(124, 58, 237, 0.5) !important;
+  color: var(--ui-heading) !important;
 }
 
-/* ══════════════════════════════════════════════
-   SUCCESS / ERROR STATES
-   ══════════════════════════════════════════════ */
-.quiz-option.correct, .exp-correct, .test-case-badge.passed, .submit-result.accepted {
-  background: oklch(94% 0.04 155) !important;
-  border-color: var(--forest) !important;
-  color: var(--forest) !important;
+/* ── Result States ── */
+.quiz-option.correct,
+.exp-correct,
+.test-case-badge,
+.submit-result.accepted {
+  background: rgba(16, 185, 129, 0.12) !important;
+  border-color: rgba(16, 185, 129, 0.4) !important;
+  color: #10b981 !important;
 }
 
-.quiz-option.wrong, .exp-wrong {
-  background: oklch(95% 0.04 20) !important;
-  border-color: var(--rose) !important;
-  color: var(--rose) !important;
+.quiz-option.wrong,
+.exp-wrong {
+  background: rgba(239, 68, 68, 0.12) !important;
+  border-color: rgba(239, 68, 68, 0.4) !important;
+  color: #ef4444 !important;
 }
 
-/* ══════════════════════════════════════════════
-   MISC
-   ══════════════════════════════════════════════ */
-.chip-label { color: var(--ink-muted) !important; font-size: 0.7rem !important; }
-.chip-value, .ai-metric-value { color: var(--ink) !important; font-weight: 700 !important; }
-.footer-links a { color: var(--ink-muted) !important; }
-.footer-links a:hover { color: var(--ink) !important; }
-.footer-brand h4 { color: var(--ink) !important; }
+/* ── Footer Links ── */
+.footer-links a {
+  color: var(--ui-muted) !important;
+  transition: color 0.2s ease !important;
+}
 
+.footer-links a:hover {
+  color: var(--ui-heading) !important;
+}
+
+/* ── Route Loader ── */
 .route-loader-overlay {
-  background: var(--paper) !important;
-  backdrop-filter: none !important;
+  background: rgba(4, 5, 13, 0.75) !important;
+  backdrop-filter: blur(10px) !important;
 }
 
-/* ══════════════════════════════════════════════
-   RESPONSIVE
-   ══════════════════════════════════════════════ */
+/* ── Chip/Badge Colors ── */
+.chip-label {
+  color: var(--ui-muted) !important;
+}
+.chip-value,
+.ai-metric-value {
+  color: var(--ui-heading) !important;
+  font-weight: 700 !important;
+}
+
+/* ── Scrollable Containers ── */
+.assess-tabs {
+  border-radius: 12px !important;
+}
+
+/* ── Responsive ── */
 @media (max-width: 980px) {
+  .page-container,
+  .progress-dashboard,
+  .ai-page {
+    padding: var(--ui-space-4) var(--ui-space-3) var(--ui-space-6) !important;
+  }
+
   .navbar {
-    height: auto !important;
-    padding: 0.75rem 1rem !important;
-    flex-wrap: wrap !important;
+    margin: var(--ui-space-3) !important;
+    padding: var(--ui-space-3) !important;
   }
-  .navbar-links {
-    order: 3 !important;
-    width: 100% !important;
-    overflow-x: auto !important;
-    padding-bottom: 0.25rem !important;
+
+  .site-footer {
+    margin: 0 var(--ui-space-3) var(--ui-space-3) !important;
   }
-  .page-container, .progress-dashboard, .ai-page {
-    padding: 1.25rem 1rem 2.5rem !important;
-  }
-  .site-footer { margin: 0 !important; }
 }
